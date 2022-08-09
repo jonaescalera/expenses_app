@@ -8,4 +8,7 @@ The project's aim is to control our monthly budget.
 
 ## External Libraries
 
--
+- react-native-vector-icons
+- react-native-safe-area-context (link to android)
+- @types/react-native-vector-icons
+- react-native-screens
