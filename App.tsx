@@ -3,18 +3,20 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './src/components/Home';
 import ThemeButton from './src/components/ThemeButton';
-import { ThemeContextProvider } from './src/contexts/ThemeContext';
+import { ThemeProvider } from './src/contexts/ThemeContext';
+import AddExpense from './src/components/AddExpense';
 
 
 export type RootStackParamList = {
   Home: undefined;
+  AddExpense: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
   return (
-    <ThemeContextProvider>
+    <ThemeProvider>
       <NavigationContainer>      
       <Stack.Navigator
         initialRouteName="Home"
@@ -27,10 +29,10 @@ const App = () => {
         }}
       >
         <Stack.Screen name="Home" component={Home} />
-        {/* <Stack.Screen name="AddExpense" component={AddExpense} /> */}
+        <Stack.Screen name="AddExpense" component={AddExpense} />
       </Stack.Navigator>      
       </NavigationContainer>
-    </ThemeContextProvider>
+    </ThemeProvider>
   );
 };
 
