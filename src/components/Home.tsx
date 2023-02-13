@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useCallback, useEffect, useContext} from 'react';
 import {ListItem, Card} from "@rneui/themed";
 import {Button, Text} from "@rneui/base";
 import {ScrollView, StyleSheet, View, Dimensions} from "react-native";
@@ -24,6 +24,25 @@ const Home = ({navigation, route}: PropsNavigation) => {
   const {state, dispatch} = useContext(ThemeContext);
   const {theme} = state;
   const isFocused = useIsFocused();
+
+  const loadDataCallBack = useCallback(async () => {
+    try {
+      fetchItems()
+        .then(res => {
+          dispatch({type: "GET_ITEMS", payload: res});
+        })
+        .then(() => {
+          dispatch({type: "GET_TOTAL_MONTH"});
+        })
+        .catch(err => dispatch({type: "FETCH_ERROR", payload: err?.message}));
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    isFocused && loadDataCallBack();
+  }, [loadDataCallBack, isFocused]);
 
   const editExpense = () => {
     navigation.navigate("AddExpense");

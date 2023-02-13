@@ -1,11 +1,13 @@
+import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useForm, Controller} from "react-hook-form";
 import {Input} from "@rneui/themed";
 import {Button, Text} from "@rneui/base";
-
+import {ThemeContext} from "../contexts/ThemeContext";
 import type {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../../App";
 import {convertDate} from "../utils/dateHelper";
+import {addItem} from "../actions";
 
 type FormData = {
   name: string;
@@ -21,6 +23,9 @@ const AddExpense = ({navigation, route}: PropsNavigation) => {
     handleSubmit,
     formState: {errors},
   } = useForm<FormData>();
+  const {state, dispatch} = React.useContext(ThemeContext);
+  const {items} = state;
+  const [newExpense, setNewExpense] = React.useState("");
 
   const onSubmit = (data: FormData) => {
     const dateItem = new Date();
@@ -30,7 +35,35 @@ const AddExpense = ({navigation, route}: PropsNavigation) => {
       date: convertDate(dateItem),
       price: data?.price,
     };
-    //addExpense(obj);
+    addExpense(obj);
+  };
+
+  const addExpense = async (newExpense: FormData) => {
+    try {
+      const newTodos = {
+        id: items.length
+          ? items.reduce((acc, cur) => {
+              if (cur.id > acc.id) return cur;
+              return acc;
+            }).id + 1
+          : 1,
+        name: newExpense.name,
+        date: newExpense.date,
+        //price: Math.round(parseFloat(newExpense.price) * 1e2) / 1e2,
+        price: parseFloat(newExpense.price),
+      };
+
+      addItem(newTodos)
+        .then(() => {
+          dispatch({type: "ADD_ITEM", payload: newTodos});
+        })
+        .catch(err => dispatch({type: "FETCH_ERROR", payload: err?.message}));
+
+      setNewExpense("");
+      navigation.goBack();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
 
