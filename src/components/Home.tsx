@@ -3,26 +3,21 @@ import {ListItem, Card} from "@rneui/themed";
 import {Button, Text} from "@rneui/base";
 import {ScrollView, StyleSheet, View, Dimensions} from "react-native";
 import {useIsFocused} from "@react-navigation/native";
-import {ThemeContext} from "./../contexts/ThemeContext";
+import {DataContext} from "../contexts/DataContext";
 import {convertValueToMask} from "../utils/maskHelper";
 import {fetchItems, deleteExpense} from "../actions";
 
 import type {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../../App";
 
+import {ThemeContext} from "../contexts/ThemeContext"
+
 type PropsNavigation = NativeStackScreenProps<RootStackParamList, "Home">;
-
-
-interface HomeProps {
-  name: string;
-}
-
-
 
 const Home = ({navigation, route}: PropsNavigation) => {
   const {width} = Dimensions.get("screen");
-  const {state, dispatch} = useContext(ThemeContext);
-  const {theme} = state;
+  const {state, dispatch} = useContext(DataContext);
+  const {theme,styles} = useContext(ThemeContext);
   const isFocused = useIsFocused();
 
   const loadDataCallBack = useCallback(async () => {
@@ -59,36 +54,32 @@ const Home = ({navigation, route}: PropsNavigation) => {
       .catch(error => dispatch({type: "FETCH_ERROR", payload: error?.message}));
   };
 
-  const styles = StyleSheet.create({
-    contain: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-    },
+  const localStyles = StyleSheet.create({
+    
     titleCard: {
       fontSize: 40,
-      color: theme ? "#2c2c2c" : "white",
+      color:  theme.colour,
     },
     listItem: {
-      backgroundColor: theme ? "white" : "#2c2c2c",
+      backgroundColor: theme.background,
       width: width,
       borderBottomWidth: 1,
     },
     colorTheme: {
-      color: theme ? "#2c2c2c" : "white",
+      color: theme.colour
     },
   });
 
 
   return (
-   <ScrollView style={{backgroundColor: theme ? "white" : "#2c2c2c"}}>
-      <View style={styles.contain}>
+   <ScrollView style={{backgroundColor: theme.background}}>
+      <View style={styles.container}>
         <Card
           containerStyle={{
             width: "auto",
-            backgroundColor: theme ? "white" : "#2c2c2c",
+            backgroundColor: theme.background,
           }}>
-          <Card.Title style={styles.titleCard}>
+          <Card.Title style={localStyles.titleCard}>
             $ {convertValueToMask(state.totalItems.toFixed(2))}
           </Card.Title>
         </Card>
@@ -98,7 +89,7 @@ const Home = ({navigation, route}: PropsNavigation) => {
               <ListItem.Swipeable
                 key={index}
                 bottomDivider
-                containerStyle={styles.listItem}
+                containerStyle={localStyles.listItem}
                 leftContent={() => (
                   <Button
                     title="edit"
@@ -116,15 +107,15 @@ const Home = ({navigation, route}: PropsNavigation) => {
                   />
                 )}>
                 <ListItem.Content>
-                  <ListItem.Title style={styles.colorTheme}>
+                  <ListItem.Title style={localStyles.colorTheme}>
                     {item.name}
                   </ListItem.Title>
-                  <ListItem.Subtitle style={styles.colorTheme}>
+                  <ListItem.Subtitle style={localStyles.colorTheme}>
                     {item.date}
                   </ListItem.Subtitle>
                 </ListItem.Content>
                 <ListItem.Content right>
-                  <ListItem.Title style={styles.colorTheme}>
+                  <ListItem.Title style={localStyles.colorTheme}>
                     $ {convertValueToMask(item.price?.toFixed(2))}
                   </ListItem.Title>
                 </ListItem.Content>

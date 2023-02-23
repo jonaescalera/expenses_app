@@ -3,8 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './src/components/Home';
 import ThemeButton from './src/components/ThemeButton';
-import { ThemeProvider } from './src/contexts/ThemeContext';
+import { DataProvider } from './src/contexts/DataContext';
 import AddExpense from './src/components/AddExpense';
+import { ThemeProvider } from './src/contexts/ThemeContext';
 
 
 export type RootStackParamList = {
@@ -15,8 +16,10 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const App = () => {
+
   return (
-    <ThemeProvider>
+    <DataProvider>
+      <ThemeProvider>
       <NavigationContainer>      
       <Stack.Navigator
         initialRouteName="Home"
@@ -32,7 +35,8 @@ const App = () => {
         <Stack.Screen name="AddExpense" component={AddExpense} />
       </Stack.Navigator>      
       </NavigationContainer>
-    </ThemeProvider>
+      </ThemeProvider>
+    </DataProvider>
   );
 };
 

@@ -3,11 +3,12 @@ import {StyleSheet, View} from 'react-native';
 import {useForm, Controller} from "react-hook-form";
 import {Input} from "@rneui/themed";
 import {Button, Text} from "@rneui/base";
-import {ThemeContext} from "../contexts/ThemeContext";
+import {DataContext} from "../contexts/DataContext";
 import type {NativeStackScreenProps} from "@react-navigation/native-stack";
 import {RootStackParamList} from "../../App";
 import {convertDate} from "../utils/dateHelper";
 import {addItem} from "../actions";
+import { ThemeContext } from '../contexts/ThemeContext';
 
 type FormData = {
   name: string;
@@ -23,7 +24,8 @@ const AddExpense = ({navigation, route}: PropsNavigation) => {
     handleSubmit,
     formState: {errors},
   } = useForm<FormData>();
-  const {state, dispatch} = React.useContext(ThemeContext);
+  const {state, dispatch} = React.useContext(DataContext);
+  const {styles, theme} = React.useContext(ThemeContext)
   const {items} = state;
   const [newExpense, setNewExpense] = React.useState("");
 
@@ -66,9 +68,27 @@ const AddExpense = ({navigation, route}: PropsNavigation) => {
     }
   };
 
+  const styles1 = StyleSheet.create({
+    contain: {
+      flex: 1,
+      flexDirection: "column",
+      alignItems: "center",
+      backgroundColor: theme.background,
+    },
+    input: {
+      borderWidth: 1,
+      width: 300,
+    },
+    alertText: {
+      color: "red",
+    },
+    button: {
+      alignSelf: "center",
+    },
+  });
 
   return(
-    <View style={styles.contain}>
+    <View style={styles1.contain}>
       <Controller
         control={control}
         rules={{
@@ -81,12 +101,13 @@ const AddExpense = ({navigation, route}: PropsNavigation) => {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            style={{color: theme.colour}}
           />
         )}
         name="name"
       />
 
-      {errors.name && <Text style={styles.alertText}>This is required</Text>}
+      {errors.name && <Text style={styles1.alertText}>This is required</Text>}
 
       <Controller
         control={control}
@@ -104,10 +125,10 @@ const AddExpense = ({navigation, route}: PropsNavigation) => {
         )}
         name="price"
       />
-      {errors.price && <Text style={styles.alertText}>This is required</Text>}
+      {errors.price && <Text style={styles1.alertText}>This is required</Text>}
 
       <Button
-        style={styles.button}
+        style={styles1.button}
         title="submit"
         onPress={handleSubmit(onSubmit)}
       />
@@ -115,22 +136,6 @@ const AddExpense = ({navigation, route}: PropsNavigation) => {
   )
 }
 
-const styles = StyleSheet.create({
-  contain: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  input: {
-    borderWidth: 1,
-    width: 300,
-  },
-  alertText: {
-    color: "red",
-  },
-  button: {
-    alignSelf: "center",
-  },
-});
+
 
 export default AddExpense;
